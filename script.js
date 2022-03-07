@@ -1,4 +1,4 @@
-const totalCities = 12;
+const totalCities = 20;
 let cities = [];
 let distances = []; //2d array where second index MUST be higher than first one
 const populationSize = 10000;
@@ -37,7 +37,6 @@ function draw() {
     scoreSum += population[i].score;
     if (population[i].distance < bestDistance) {
       bestDistance = population[i].distance;
-      console.log(population[i].distance, bestDistance);
       bestPath = population[i].order.slice();
     }
     if (population[i].distance < currentBestDistance) {
@@ -52,8 +51,14 @@ function draw() {
   //prepare new generation
   const newPopulation = [];
   for (let i = 0; i < populationSize; i++) {
-    newPopulation.push(population[pickParentIndex()]);
-    newPopulation[i].mutate(0.3);
+    if (random(1) < 0.5) {
+      newPopulation.push(population[pickParentIndex()]);
+      newPopulation[i].mutate(0.3);
+    } else {
+      newPopulation.push(population[i]);
+      newPopulation[i].order = bestPath.slice();
+      newPopulation[i].mutate(0.1);
+    }
   }
 
   Order.strokeColor = [255, 255, 255];
@@ -67,8 +72,8 @@ function draw() {
 function generateCities(total) {
   const cities = [];
   for (let i = 0; i < total; i++) {
-    const x = random(width);
-    const y = random(height / 2);
+    const x = 0.05 * width + random(width * 0.9);
+    const y = 0.05 * (height / 2) + random(0.9 * (height / 2));
     cities.push(createVector(x, y));
   }
   return cities;
